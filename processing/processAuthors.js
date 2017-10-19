@@ -1,12 +1,12 @@
 const lineReader = require('./lineReader')
 
-const FILE_NAME = 'papers-sample.json'
+const FILE_NAME = 'papers.json'
 const DELIM = ';'
 
 const authorIds = new Set()
 const lr = lineReader(FILE_NAME)
 
-console.log(`id${DELIM}name`)
+console.log('%s%s%s', 'AuthorID', DELIM, 'AuthorName')
 lr(line => {
     // Process line data
     let data = JSON.parse(line.trim())
