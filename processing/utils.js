@@ -1,5 +1,5 @@
-const stringify = require('csv-stringify')
-i
+const { Stringifier } = require('csv-stringify')
+
 module.exports = {
     getVenueId (venue) {
         return venue.toLowerCase()
@@ -8,7 +8,11 @@ module.exports = {
             .replace(/_{2,}/g, '_')
     },
 
-    csvSanitize (string, delim) {
+    csvStringify (data, delim) {
+        let stringifier = new Stringifier({
+            delimiter: delim
+        })
+        return stringifier.stringify(data)
     }
 
 }

@@ -1,9 +1,9 @@
 const lineReader = require('./lineReader')
-const { getVenueId, csvSanitize } = require('./utils')
+const { getVenueId, csvStringify } = require('./utils')
 
-const FILE_NAME = 'papers-sample.json'
+const FILE_NAME = 'papers.json'
 const DELIM = ';'
-const KEYS = ['PaperID', 'PaperAbstract', 'PaperTitle', 'PaperVenueID', 'PaperYear']
+const KEYS = ['PaperID', 'PaperTitle', 'PaperVenueID', 'PaperYear']
 
 const papers = {}
 const lr = lineReader(FILE_NAME)
@@ -19,8 +19,9 @@ lr(line => {
         data.authors.filter(a => a.ids.length > 0 && a.name.trim().length > 0).length > 0) {
 
         papers[data.id] = {
-            PaperAbstract: csvSanitize(data.paperAbstract, DELIM),
-            PaperTitle: csvSanitize(data.title, DELIM),
+            PaperID: data.id,
+            PaperAbstract: data.paperAbstract,
+            PaperTitle: data.title.replace(/[\r\n"]+/g, ''),
             PaperVenueID: getVenueId(data.venue.trim()),
             PaperYear: data.year
         }
@@ -28,9 +29,8 @@ lr(line => {
 }, () => {
     for (let key in papers) {
         let paper = papers[key]
-        let row = [key]
-        Array.prototype.push.apply(row, KEYS.map(key => paper[key] || ''))
-        console.log(row.join(DELIM))
+        let row = KEYS.map(key => paper[key] || '')
+        console.log(csvStringify(row, DELIM))
     }
 })
 
