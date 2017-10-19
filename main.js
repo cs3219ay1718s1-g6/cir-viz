@@ -33,6 +33,49 @@ app.get('/authors/top', (req, res) => {
     })
 })
 
+app.get('/papers/top', (req, res) => {
+    let count = parseInt(req.query.count) || 10
+    let query = 'MATCH (p2:Paper)-[:CITES]->(p1:Paper)'
+    if (req.query.venue) {
+        let venueId = getVenueId(req.query.venue.toString().trim())
+        query += `-[:WITHIN]->(v:Venue) WHERE v.venueID = '${venueId}'`
+    }
+    query += ' WITH p1.paperTitle AS Title, COUNT(p2) AS CitedIn'
+    query += ' ORDER BY CitedIn DESC '
+    query += ` RETURN Title, CitedIn LIMIT ${count};`
+
+    session.run(query).then(result => {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify(result.records.map(r => ({
+            title: r.get(0),
+            citedIn: Math.max(r.get(1).low, r.get(1).high)
+        }))))
+    }).catch(err => {
+        res.send(err.message)
+    }) 
+})
+
+app.get('/papers/trend', (req, res) => {
+    let query = 'MATCH (p:Paper)'
+    if (req.query.venue) {
+        let venueId = getVenueId(req.query.venue.toString().trim())
+        query += `-[:WITHIN]->(v:Venue) WHERE v.venueID = '${venueId}'`
+    }
+    query += ' WITH p.paperYear as Year, COUNT(p) AS Papers'
+    query += ' ORDER BY Year ASC'
+    query += ' RETURN Year, Papers;'
+
+    session.run(query).then(result => {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify(result.records.map(r => ({
+            year: r.get(0).low,
+            count: r.get(1).low
+        }))))
+    }).catch(err => {
+        res.send(err.message)
+    }) 
+})
+
 const port = process.env.PORT || 3000
 app.listen(port, () => console.log('CIR server listening on port ' + port))
 
