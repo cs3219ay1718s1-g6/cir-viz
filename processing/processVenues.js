@@ -7,6 +7,7 @@ const DELIM = ';'
 const venueIds = {}
 const lr = lineReader(FILE_NAME)
 
+console.log('%s%s%s', 'VenueID', DELIM, 'VenueName')
 lr(line => {
     // Process line data
     let data = JSON.parse(line.trim())
