@@ -11,6 +11,12 @@ const driver = neo4j.driver(databaseUri, neo4j.auth.basic(neo4jUser, neo4jPass))
 const session = driver.session()
 const { getVenueId } = require('./processing/utils')
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    next()
+})
+
 // Routes
 app.get('/authors/top', (req, res) => {
     let count = parseInt(req.query.count) || 10
@@ -52,7 +58,7 @@ app.get('/papers/top', (req, res) => {
         }))))
     }).catch(err => {
         res.send(err.message)
-    }) 
+    })
 })
 
 app.get('/papers/trend', (req, res) => {
@@ -73,7 +79,7 @@ app.get('/papers/trend', (req, res) => {
         }))))
     }).catch(err => {
         res.send(err.message)
-    }) 
+    })
 })
 
 const port = process.env.PORT || 3000
