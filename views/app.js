@@ -15,7 +15,7 @@
         .force('charge', charge)
         .force('center', d3.forceCenter(width / 2, height  /2));
 
-    
+
     const dragStarted = (d) => {
         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -35,7 +35,7 @@
 
 
     d3.json(
-        'http://localhost:3000/papers/web?count=2&title=Low-density%20parity%20check%20codes%20over%20GF(q)',
+        'http://188.166.212.83:3000/papers/web?count=2&title=Low-density%20parity%20check%20codes%20over%20GF(q)',
         (error, graph) => {
             if (error) throw error;
 
@@ -76,7 +76,7 @@
                     }
                     return '<div>' + title + '</div>'
                 })
-      
+
             function collide(node) {
                 var r = 0.1,
                     nx1 = node.x - r,
