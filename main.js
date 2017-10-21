@@ -82,6 +82,28 @@ app.get('/papers/trend', (req, res) => {
     })
 })
 
+app.get('/phrases/top', (req, res) => {
+    let count = parseInt(req.query.count) || 10
+    let query = 'MATCH (ph:Phrase)<-[:CONTAINS]-(pa:Paper)'
+    if (req.query.venue) {
+        let venueId = getVenueId(req.query.venue.toString().trim())
+        query += `-[:WITHIN]->(v:Venue) WHERE v.venueID = '${venueId}'`
+    }
+    query += ' WITH ph.phraseValue AS Phrase, COUNT(pa) AS Frequency'
+    query += ' ORDER BY Frequency DESC'
+    query += ` RETURN Phrase, Frequency LIMIT ${count};`
+
+    session.run(query).then(result => {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify(result.records.map(r => ({
+            phrase: r.get(0),
+            frequency: Math.max(r.get(1).low, r.get(1).high)
+        }))))
+    }).catch(err => {
+        res.send(err.message)
+    })
+})
+
 const port = process.env.PORT || 3000
 app.listen(port, () => console.log('CIR server listening on port ' + port))
 
