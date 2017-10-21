@@ -1,9 +1,3 @@
-DROP INDEX ON :Author(authorID);
-DROP INDEX ON :Author(authorName);
-
-MATCH (a: Author)
-DETACH DELETE a;
-
 USING PERIODIC COMMIT 10000
 LOAD CSV WITH HEADERS FROM "file:$FILENAME$" AS row FIELDTERMINATOR ';'
 CREATE (:Author {authorID: row.AuthorID, authorName: row.AuthorName});

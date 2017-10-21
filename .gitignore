@@ -2,6 +2,8 @@
 .env
 processing/*.json
 processing/*.csv
+processing/*.cypher
+!processing/*.example.cypher
 
 ###OSX###
 
