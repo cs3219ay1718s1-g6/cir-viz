@@ -6,7 +6,7 @@ const DELIM = ';'
 
 const lr = lineReader(FILE_NAME)
 
-console.log('%s%s%s', 'PaperID', 'Phrase')
+console.log('%s%s%s', 'PaperID', DELIM, 'Phrase')
 lr(line => {
     let data = JSON.parse(line.trim())
     if (data.hasOwnProperty('id') &&
