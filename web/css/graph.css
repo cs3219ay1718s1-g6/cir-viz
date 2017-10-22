@@ -1,0 +1,107 @@
+/* Add shadow effect to chart. If you don't like it, get rid of it. */
+svg {
+    -webkit-filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.3) );
+    filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.25) );
+}
+
+h1, h3 { text-align:center; }
+
+/*Styling for the lines connecting the labels to the slices*/
+polyline{
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
+
+/* Make the percentage on the text labels bold*/
+.labelName tspan {
+    font-style: normal;
+    font-weight: 100;
+    font-family:'Open Sans';
+}
+
+/* In biology we generally italicise species names. */
+.labelName {
+    font-size: 0.9em;
+    font-style: italic;
+    font-family:'Open Sans';
+}
+
+.chart { 
+    text-align:center;
+    vertical-align: middle;
+    font-family:'Open Sans';
+}
+
+.chart h2 {
+    margin-top:100px;
+    text-align:center;
+}
+
+.chart h2.error { 
+    color:red;
+}
+
+.label, .amount{
+  text-anchor: middle;
+  text-transform: uppercase;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 4em;
+}
+
+.line {
+    fill: none;
+    stroke: #fb7b0b;
+    stroke-width: 5;
+}
+
+/* Style the dots by assigning a fill and stroke */
+.dot {
+    fill: #fff;
+    stroke: #feb431;
+    stroke-width:3;
+}
+
+div.tooltip {        
+    position:absolute;  
+    text-align: center;         
+    width: 100px;                    
+    height: 55px;                   
+    padding: 10px;               
+    font: 12px sans-serif;
+    font-weight:bold;
+    background: #FEBC41; 
+    border: 0px;        
+    border-radius: 8px;    
+    opacity:0.5;     
+    pointer-events: none;       
+    z-index:1000;    
+}
+
+.links line {
+    stroke: #999;
+    stroke-opacity: 0.6;
+}
+
+.nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+foreignObject div {
+    overflow: hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    box-sizing: border-box;
+    font: 5px sans-serif;
+    color: #fff;
+}
+
+foreignObject body {
+    background:transparent;
+}
