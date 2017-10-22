@@ -176,7 +176,7 @@ $(document).ready(function() {
 
 		requestQ4(title)
 			.then((response)=> { handleQ4(response); })
-			//.catch((error) => { console.log('Error retrieving data for Q4.' + error); });
+			.catch((error) => { console.log('Error retrieving data for Q4.' + error); });
 	}
 
 	function requestQ4(title) {
@@ -192,6 +192,8 @@ $(document).ready(function() {
 				success: function(response) { resolve(response); },
 				error: function(xhr, ajax_options, thrown_error) { reject(xhr); }
 			});
+
+			console.log(title);
 		});
 	}
 
