@@ -14,6 +14,35 @@ polyline{
     fill: none;
 }
 
+.labels {
+    text-align:left;
+    display:block;
+}
+
+.label { 
+    height:20px;
+}
+
+
+.label-color {
+    width:15px;
+    height:15px;
+    display:inline-block;
+}
+
+.labels p {
+    font-family:'Open Sans';
+    display:inline-block;
+    font-weight:normal;
+    font-size:12px;
+    max-height:20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 90%;
+    padding:0px 5px;
+    margin:0px 5px;
+    overflow: hidden;
+}
 /* Make the percentage on the text labels bold*/
 .labelName tspan {
     font-style: normal;

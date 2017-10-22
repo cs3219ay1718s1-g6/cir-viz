@@ -289,11 +289,14 @@ function barChart(id) {
       y.domain([0, d3.max(data, function(d) { return d.value; })]);
       // append the rectangles for the bar chart
       var bars = svg.selectAll(".bar")
-          .data(data);
+          .data(data)
+        .on("mouseover", function(d) { $('#' + d.color.replace('#', '') + ' p').css('background-color', 'rgba(254,180,49,0.5)'); })
+        .on("mouseout", function(d) { $('.color-legend p').css('background', 'transparent'); });
       
       bars.enter().append("rect")
           .attr("class", "bar")
           .attr("fill", function(d) { return d.color; });
+          
       
       bars.exit()
         .transition()
@@ -385,6 +388,15 @@ function barChart(id) {
           .remove();
       
       chart.drawChart(data);
+      
+      var append = '<div class="labels">';
+      for(var i = 0; i < Object.keys(data).length; i++) {
+        item = data[i];
+        append += '<div class="label color-legend" id="' + item.color.replace('#', '') + '"><div class="label-color" style="background-color:'+ item.color+ ';"></div><p>' + item.label + '<p></div>';
+      }
+      append += "</div>";
+    $('#' + id).append(append);   
+    
     };
 
     return chart;
@@ -453,9 +465,10 @@ function lineChart(id, data) {
                 .duration(200)    
                 .style("opacity", .9);    
             div .html("Year: " + d.year.getFullYear() + "<br/> Count:"  + d.count)  
-                .style("left", (d3.event.pageX) - parent.position().left + 100 + "px")    
-                .style("top", (d3.event.pageY) - 1700 + "px"); 
+                .style("left", 800 + "px")    
+                .style("top", 120 + "px"); 
             })          
+
         .on("mouseout", function(d) {   
             div.transition()    
                 .duration(500)    
