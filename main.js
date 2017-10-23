@@ -17,7 +17,7 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use(express.static('views'))
+app.use(express.static('web'))
 
 // Routes
 app.get('/authors/top', (req, res) => {
@@ -113,43 +113,41 @@ app.get('/papers/web', (req, res) => {
     } else {
         paperTitle = paperTitle.trim()
         let count = parseInt(req.query.count) || 2
-        let query = 'MATCH (p:Paper)'
-        for (let i = 0; i < count; ++i) {
-            query += `<-[:CITES]-(p${i}:Paper)`
-        }
-        query += ` WHERE p.paperTitle='${paperTitle}'`
-        query += ' RETURN p'
-        for (let i = 0; i < count; ++i) {
-            query += `, p${i}`
-        }
-        query += ';'
+        let query = `MATCH p = (p0:Paper)<-[:CITES*..${count}]-(px:Paper)`
+        query += ` WHERE toLower(p0.paperTitle) = toLower('${paperTitle}')`
+        query += ' RETURN p;'
 
         session.run(query).then(result => {
             let citations = new Set()
             let papers = {}
-            for (let r of result.records) {
-                for (let i = 0; i < r.length; ++i) {
-                    // Resolve nodes
-                    let paperId = r.get(i).properties.paperID
-                    if (!papers.hasOwnProperty(paperId)) {
-                        let paper = {
-                            id: paperId,
-                            title: r.get(i).properties.paperTitle,
-                            level: i
-                        }
-                        papers[paperId] = paper
-                    }
 
-                    // Resolve citations
-                    if (i >= 1) {
-                        let to = r.get(i - 1)
-                        let from = r.get(i)
-                        citations.add(
-                            from.properties.paperID +
-                            '->' +
-                            to.properties.paperID
-                        )
+            const mergePaper = (paper, level) => {
+                if (!papers.hasOwnProperty(paper.paperID)) {
+                    papers[paper.paperID] = {
+                        id: paper.paperID,
+                        title: paper.paperTitle,
+                        year: Math.max(
+                            paper.paperYear.low,
+                            paper.paperYear.high
+                        ),
+                        level: level
                     }
+                } else if (papers.hasOwnProperty(paper.paperId) &&
+                           papers[paper.paperId].level > level) {
+
+                    papers[paper.paperId].level = level
+                }
+            }
+
+            for (let r of result.records) {
+                for (let i = 0; i < r.get(0).segments.length; ++i) {
+                    let segment = r.get(0).segments[i]
+                    // Resolve nodes
+                    mergePaper(segment.start.properties, i)
+                    mergePaper(segment.end.properties, i + 1)
+                    let fromId = segment.end.properties.paperID
+                    let toId = segment.start.properties.paperID
+                    citations.add(`${fromId}->${toId}`)
                 }
             }
             let data = {
@@ -166,6 +164,22 @@ app.get('/papers/web', (req, res) => {
             res.send(err.message)
         })
     }
+})
+
+// Get authors for a particular paper
+app.get('/papers/:paperid/authors', (req, res) => {
+    let paperId = req.params.paperid.replace(/[^a-f0-9]+/g, '')
+    let query = 'MATCH (p:Paper)<-[:CONTRIB_TO]-(a:Author)'
+    query += ` WHERE p.paperID = '${paperId}'`
+    query += ' RETURN a.authorName;'
+    session.run(query).then(result => {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify({
+            authors: result.records.map(r => r.get(0))
+        }))
+    }).catch(err => {
+        res.send(err.message)
+    })
 })
 
 const port = process.env.PORT || 3000
