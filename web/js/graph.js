@@ -765,49 +765,106 @@ function networkGraph(id, graph) {
     parent.append('<svg width="960" height="800"></svg>');
 
     const svg = d3.select('#q4-chart svg');
-    const width  = +svg.attr('width');
+    const width = +svg.attr('width');
     const height = +svg.attr('height');
 
-    const MAX_NODE_TEXT_LENGTH = 24
+    class Vector2D {
+        constructor(x, y) {
+            this.x = x
+            this.y = y
+            this.length = Math.sqrt(this.x * this.x + this.y * this.y)
+        }
 
-    const color = d3.scaleOrdinal([colors[0], colors[2], colors[4]]);
+        vectorOfLength(length) {
+            if (this.length === length) {
+                return this
+            }
+            return this.multiply(length / this.length)
+        }
 
-    const charge = d3.forceManyBody()
-    charge.strength(-100)
+        orthogonalVector() {
+            return new Vector2D(-this.y, this.x)
+        }
+
+        unitVector() {
+            return this.vectorOfLength(1)
+        }
+
+        add (vector) {
+            return new Vector2D(
+                this.x + vector.x,
+                this.y + vector.y
+            )
+        }
+
+        multiply (scalar) {
+            return new Vector2D(
+                this.x * scalar,
+                this.y * scalar
+            )
+        }
+
+        subtract (vector) {
+            return this.add(vector.multiply(-1))
+        }
+
+        toString() {
+            return this.x + ' ' + this.y
+        }
+    }
+
+    const NODE_RADIUS = 8
+    const MAX_TEXT_LENGTH = 22
+    const ARROW_SIZE = 10
+    const ARROW_ANGLE = 30 / 90.0 * Math.PI
+
+    const arrowBase = Math.tan(ARROW_ANGLE) * ARROW_SIZE / 2
+    const color = d3.scaleOrdinal(d3.schemeCategory10)
 
     const simulation = d3.forceSimulation()
         .force('link', d3.forceLink().id(d => d.id))
-        .force('charge', charge)
-        .force('center', d3.forceCenter(width / 2, height  /2));
+        .force('collision', d3.forceCollide(NODE_RADIUS))
+        .force('charge', d3.forceManyBody().strength(-80))
+        .force('center', d3.forceCenter(width / 2, height / 2))
 
-
-    const dragStarted = (d) => {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+    const adjacencyList = {}
+    for (let link of graph.links) {
+        let { source, target } = link
+        adjacencyList[source] = adjacencyList[source] || new Set()
+        adjacencyList[target] = adjacencyList[target] || new Set()
+        adjacencyList[source].add(target)
+        adjacencyList[target].add(source)
     }
 
-    const dragged = (d) => {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
+    const authorMap = {}
 
-    const dragEnded = (d) => {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-    }
+    let focusedLink = null
 
-    let maxLevel = graph.nodes.map(n => n.level).reduce((a, v) => v > a ? v : a)
-
-    let link = svg.append('g')
+    const link = svg.append('g')
         .attr('class', 'links')
         .selectAll('line')
         .data(graph.links)
-        .enter()
-        .append('line')
+        .enter().append('line')
+        .on('mouseover', d => {
+            focusedLink = [d.source.id, d.target.id]
+            svg.attr('cursor', 'pointer')
+            ticked()
+        })
+        .on('mouseout', d => {
+            focusedLink = null
+            svg.attr('cursor', 'normal')
+            ticked()
+        })
+    
+    const arrowHeads = svg.append('g')
+        .attr('class', 'arrow-heads')
+        .selectAll('path')
+        .data(graph.links)
+        .enter().append('path')
 
-    let node = svg.append('g')
+    let focusedNodeId = null
+
+    const node = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('g.node')
         .data(graph.nodes)
@@ -815,74 +872,158 @@ function networkGraph(id, graph) {
         .append('g')
         .attr('class', 'node')
         .call(d3.drag()
-            .on('start', dragStarted)
+            .on('start', dragstarted)
             .on('drag', dragged)
-            .on('end', dragEnded))
-
-    node.append('circle')
-        .attr('r', 15)
-        .attr('fill', d => color(d.level))
-
-    node.append('foreignObject')
-        .attr('width', 30)
-        .attr('height', 30)
-        .attr('transform', 'translate(-15, -15)')
-        .append('xhtml:body')
-        .html(d => {
-            let title = d.title.trim()
-            if (title.length > MAX_NODE_TEXT_LENGTH) {
-                title = title.substring(0, MAX_NODE_TEXT_LENGTH) + '&hellip;'
+            .on('end', dragended))
+        .on('mouseover', d => {
+            focusedNodeId = d.id
+            svg.attr('cursor', 'pointer')
+            let nodeAuthors = d3.select('#authors-' + d.id)
+            if (nodeAuthors && nodeAuthors.html().indexOf('<span') !== -1) {
+                $.getJSON(`http://188.166.212.83:3000/papers/${d.id}/authors`, data => {
+                    nodeAuthors.html('<br/>' + data.authors.join(', '))
+                })
             }
-            return '<div>' + title + '</div>'
+            ticked()
+        })
+        .on('mouseout', d => {
+            focusedNodeId = null
+            svg.attr('cursor', 'normal')
+            ticked()
         })
 
-    function collide(node) {
-        var r = 0.1,
-            nx1 = node.x - r,
-            nx2 = node.x + r,
-            ny1 = node.y - r,
-            ny2 = node.y + r;
-        return function (quad, x1, y1, x2, y2) {
-            if (quad.point && (quad.point !== node)) {
-                var x = node.x - quad.point.x,
-                    y = node.y - quad.point.y,
-                    l = Math.sqrt(x * x + y * y),
-                    r = node.radius + quad.point.radius;
-                if (l < r) {
-                    l = (l - r) / l * .5;
-                    node.x -= x *= l;
-                    node.y -= y *= l;
-                    quad.point.x += x;
-                    quad.point.y += y;
-                }
-            }
-            return x1 > nx2
-                || x2 < nx1
-                || y1 > ny2
-                || y2 < ny1;
-        };
-    }
+    node.append('circle')
 
+    let nodeTitles = svg.append('g')
+        .attr('class', 'nodeTitles')
+        .selectAll('g.nodeTitle')
+        .data(graph.nodes)
+        .enter()
+        .append('g')
+        .attr('class', 'nodeTitle')
+        .attr('visibility', 'hidden')
 
-    const ticked = () => {
-        let q = d3.quadtree(graph.nodes)
+    let info = nodeTitles.append('foreignObject')
+        .attr('x', -20)
+        .attr('y', -70)
+        .attr('width', '100%')
+        .attr('height', 20)
+        .append('xhtml:body')
+        .style('font', '12px "Helvetica Neue", sans-serif')
+        .style('color', '#fff')
+        .style('text-align', 'left')
+        .style('background-color', 'transparent')
+        .append('div')
+        .style('display', 'inline-block')
+        .style('background-color', 'rgba(0, 0, 0, .75)')
+        .style('font-size', 12)
+        .style('padding', '.5em')
+    
+    info.append('span')
+        .style('font-weight', 'bold')
+        .html(d => d.title)
+    let authorInfo = info.append('span')
+        .attr('id', d => 'authors-' + d.id)
+        .html(d => '<br/><span style="color: #aaa;">Loading authors…</span>')
+    info.append('span')
+        .html(d => '<br/>' + d.year)
 
-        for (let node of graph.nodes) {
-            q.visit(collide(node))
-        }
+    nodeTitles.append('path')
+        .attr('d', 'M -5 -15 L 5 -15 L 0 -10 L -5 -15')
+        .attr('fill', '#000')
+        .attr('fill-opacity', 0.75)
 
-        link.attr('x1', d => d.source.x)
-            .attr('y1', d => d.source.y)
-            .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y)
-
-        node.attr('transform', d => `translate(${d.x}, ${d.y})`)
-    }
-
-    simulation.nodes(graph.nodes)
+    simulation
+        .nodes(graph.nodes)
         .on('tick', ticked)
 
     simulation.force('link')
         .links(graph.links)
 
+    const isActiveNode = (node) => {
+        return (node.id === focusedNodeId ||
+            (focusedNodeId !== null && adjacencyList[focusedNodeId].has(node.id)) ||
+            (focusedLink !== null && (node.id === focusedLink[0] || node.id === focusedLink[1])))
+    }
+
+    const isActiveLink = (link) => {
+        return ((link.source.id === focusedNodeId) ||
+                (link.target.id === focusedNodeId) ||
+                (focusedLink !== null &&
+                    link.source.id === focusedLink[0] &&
+                    link.target.id === focusedLink[1]))
+    }
+
+    function ticked() {
+        link
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y)
+            .attr('stroke-width', d => {
+                if (focusedNodeId === null) {
+                    return 2
+                }
+                if (isActiveLink(d)) {
+                    return 3
+                }
+                return 1
+            })
+            .attr('stroke', d => {
+                if (isActiveLink(d)) {
+                    return '#333'
+                }
+                return '#aaa'
+            })
+            .attr('stroke-opacity', d => isActiveLink(d) ? 1 : 0.45)
+
+        node.attr('transform', d => `translate(${d.x}, ${d.y})`)
+            .select('circle')
+            .attr('fill', d => (focusedNodeId === null && focusedLink === null) || isActiveNode(d) ? color(d.level) : '#aaa')
+            .attr('r', d => isActiveNode(d) ? NODE_RADIUS * 1.25 : NODE_RADIUS)
+
+        nodeTitles.attr('transform', d => `translate(${d.x}, ${d.y})`)
+            .attr('visibility', d => focusedNodeId === d.id ? 'visible' : 'hidden')
+
+        arrowHeads.attr('d', d => {
+            let backVector = new Vector2D(
+                d.source.x - d.target.x,
+                d.source.y - d.target.y
+            )
+            let tipVector = new Vector2D(
+                d.source.x,
+                d.source.y
+            ).subtract(backVector.vectorOfLength(NODE_RADIUS))
+            let baseVector = tipVector.subtract(backVector.vectorOfLength(ARROW_SIZE))
+            let sideVector = backVector.orthogonalVector().vectorOfLength(arrowBase / 2)
+            let baseLeft = baseVector.add(sideVector)
+            let baseRight = baseVector.subtract(sideVector)
+            return `M ${tipVector.toString()} L ${baseLeft.toString()} ` +
+                `L ${baseRight.toString()} L ${tipVector.toString()}` 
+        })
+        .attr('fill', d => {
+            if ((focusedNodeId === d.source.id || focusedNodeId === d.target.id) ||
+                (focusedLink !== null && d.source.id === focusedLink[0] && d.target.id === focusedLink[1])) {
+                return '#333'
+            }
+            return '#aaa'
+        })
+    }
+
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+        d.fx = d.x
+        d.fy = d.y
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x
+        d.fy = d3.event.y
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0)
+        d.fx = null
+        d.fy = null
+    }
 }

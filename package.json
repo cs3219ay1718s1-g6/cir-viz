@@ -4,7 +4,8 @@
   "description": "Conference Information Retrieval",
   "main": "main.js",
   "scripts": {
-    "test": "./node_modules/mocha ./test/**/*Tests.js"
+    "test": "./node_modules/mocha ./test/**/*Tests.js",
+    "start": "node main.js"
   },
   "author": "Mai Anh Vu <me@maianhvu.com>",
   "license": "ISC",

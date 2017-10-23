@@ -17,7 +17,7 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use(express.static('views'))
+app.use(express.static('web'))
 
 // Routes
 app.get('/authors/top', (req, res) => {
