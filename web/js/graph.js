@@ -1000,12 +1000,12 @@ function networkGraph(id, graph) {
 
         arrowHeads.attr('d', d => {
             let backVector = new Vector2D(
-                d.source.x - d.target.x,
-                d.source.y - d.target.y
+                d.target.x - d.source.x,
+                d.target.y - d.source.y
             )
             let tipVector = new Vector2D(
-                d.source.x,
-                d.source.y
+                d.target.x,
+                d.target.y
             ).subtract(backVector.vectorOfLength(NODE_RADIUS))
             let baseVector = tipVector.subtract(backVector.vectorOfLength(ARROW_SIZE))
             let sideVector = backVector.orthogonalVector().vectorOfLength(arrowBase / 2)
