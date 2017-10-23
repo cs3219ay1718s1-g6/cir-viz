@@ -145,8 +145,8 @@ app.get('/papers/web', (req, res) => {
                     // Resolve nodes
                     mergePaper(segment.start.properties, i)
                     mergePaper(segment.end.properties, i + 1)
-                    let fromId = segment.start.properties.paperID
-                    let toId = segment.end.properties.paperID
+                    let fromId = segment.end.properties.paperID
+                    let toId = segment.start.properties.paperID
                     citations.add(`${fromId}->${toId}`)
                 }
             }
