@@ -126,6 +126,10 @@ app.get('/papers/web', (req, res) => {
                     papers[paper.paperID] = {
                         id: paper.paperID,
                         title: paper.paperTitle,
+                        year: Math.max(
+                            paper.paperYear.low,
+                            paper.paperYear.high
+                        ),
                         level: level
                     }
                 } else if (papers.hasOwnProperty(paper.paperId) &&
@@ -160,6 +164,22 @@ app.get('/papers/web', (req, res) => {
             res.send(err.message)
         })
     }
+})
+
+// Get authors for a particular paper
+app.get('/papers/:paperid/authors', (req, res) => {
+    let paperId = req.params.paperid.replace(/[^a-f0-9]+/g, '')
+    let query = 'MATCH (p:Paper)<-[:CONTRIB_TO]-(a:Author)'
+    query += ` WHERE p.paperID = '${paperId}'`
+    query += ' RETURN a.authorName;'
+    session.run(query).then(result => {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify({
+            authors: result.records.map(r => r.get(0))
+        }))
+    }).catch(err => {
+        res.send(err.message)
+    })
 })
 
 const port = process.env.PORT || 3000
