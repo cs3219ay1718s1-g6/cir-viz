@@ -412,7 +412,7 @@ function lineChart(id, data) {
     });
 
     // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 50, bottom: 30, left: 10},
+    var margin = {top: 20, right: 50, bottom: 30, left: 20},
         width = 800 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
     // parse the date / time
