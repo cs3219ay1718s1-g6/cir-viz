@@ -837,6 +837,14 @@ function networkGraph(id, graph) {
     }
 
     const authorMap = {}
+    const loadAuthors = (paperId) => {
+        let nodeAuthors = d3.select('#authors-' + paperId)
+        if (nodeAuthors && nodeAuthors.html().indexOf('<span') !== -1) {
+            $.getJSON(`http://188.166.212.83:3000/papers/${paperId}/authors`, data => {
+                nodeAuthors.html('<br/>' + data.authors.join(', '))
+            })
+        }
+    }
 
     let focusedLink = null
 
@@ -847,6 +855,8 @@ function networkGraph(id, graph) {
         .enter().append('line')
         .on('mouseover', d => {
             focusedLink = [d.source.id, d.target.id]
+            loadAuthors(d.source.id)
+            loadAuthors(d.target.id)
             svg.attr('cursor', 'pointer')
             ticked()
         })
@@ -878,12 +888,7 @@ function networkGraph(id, graph) {
         .on('mouseover', d => {
             focusedNodeId = d.id
             svg.attr('cursor', 'pointer')
-            let nodeAuthors = d3.select('#authors-' + d.id)
-            if (nodeAuthors && nodeAuthors.html().indexOf('<span') !== -1) {
-                $.getJSON(`http://188.166.212.83:3000/papers/${d.id}/authors`, data => {
-                    nodeAuthors.html('<br/>' + data.authors.join(', '))
-                })
-            }
+            loadAuthors(d.id)
             ticked()
         })
         .on('mouseout', d => {
@@ -983,7 +988,15 @@ function networkGraph(id, graph) {
             .attr('r', d => isActiveNode(d) ? NODE_RADIUS * 1.25 : NODE_RADIUS)
 
         nodeTitles.attr('transform', d => `translate(${d.x}, ${d.y})`)
-            .attr('visibility', d => focusedNodeId === d.id ? 'visible' : 'hidden')
+            .attr('visibility', d => {
+                if (focusedNodeId === d.id) {
+                    return 'visible'
+                }
+                if (focusedLink !== null && (d.id === focusedLink[0] || d.id === focusedLink[1])) {
+                    return 'visible'
+                }
+                return 'hidden'
+            })
 
         arrowHeads.attr('d', d => {
             let backVector = new Vector2D(
