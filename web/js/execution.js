@@ -6,7 +6,9 @@ $(document).ready(function() {
 
 	/* bind dropdowns */
 	bindDropDown('q1-top', 1, 10, 'Select Top Count');
+	$('#q1-top option[value=10]').attr('selected', 'selected');
 	bindDropDown('q2-top', 1, 10, 'Select Top Count');
+	$('#q2-top option[value=5]').attr('selected', 'selected');
 	bindDropDown('q5-top', 10, 100, 'Select Top Count', 10);
 
 	/* click listeners */
