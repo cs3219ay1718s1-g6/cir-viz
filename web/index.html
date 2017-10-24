@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>CS3219 - A4 : CORPUS</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-    <link rel="shortcut icon" href="images/favicon.ico" title="Favicon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="images/favicon.ico" title="Favicon" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/namari-color.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -15,245 +16,264 @@
     <link href="css/graph.css" rel="stylesheet" type="text/css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
 </head>
+
 <body>
 
-<!-- Preloader -->
-<div id="preloader">
-    <div id="status" class="la-ball-triangle-path">
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-<!--End of Preloader-->
-
-<div class="page-border" data-wow-duration="0.7s" data-wow-delay="0.2s">
-    <div class="top-border wow fadeInDown animated" style="visibility: visible; animation-name: fadeInDown;"></div>
-    <div class="right-border wow fadeInRight animated" style="visibility: visible; animation-name: fadeInRight;"></div>
-    <div class="bottom-border wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;"></div>
-    <div class="left-border wow fadeInLeft animated" style="visibility: visible; animation-name: fadeInLeft;"></div>
-</div>
-
-<div id="wrapper">
-
-    <header id="banner" class="scrollto clearfix" data-enllax-ratio=".5">
-        <div id="header" class="nav-collapse">
-            <div class="row clearfix">
-                <div class="col-1">
-
-                    <div id="logo">
-                        <h1>CS3219</h1>
-                    </div>
-
-                    <!--Main Navigation-->
-                    <nav id="nav-main">
-                        <ul>
-                            <li>
-                                <a href="#top-authors">Top Authors</a>
-                            </li>
-                            <li>
-                                <a href="#top-papers">Top Papers</a>
-                            </li>
-                            <li>
-                                <a href="#publications">Publications</a>
-                            </li>
-                            <li>
-                                <a href="#citations">Citations</a>
-                            </li>
-                            <li>
-                                <a href="#popular-words">Popular Words</a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <!--End of Main Navigation-->
-
-                    <div id="nav-trigger"><span></span></div>
-                    <nav id="nav-mobile"></nav>
-
-                </div>
-            </div>
-        </div><!--End of Header-->
-
-        <!--Banner Content-->
-        <div id="banner-content" class="row clearfix">
-
-            <div class="col-38">
-
-                <div class="section-heading">
-                    <h1>A4 : VISUALIZED</h1>
-                    <h2>Patterns and insights often goes unnoticed in dataset, becomes obvious when visualized.</h2>
-                </div>
-
-            </div>
-
-        </div><!--End of Row-->
-    </header>
-
-    <!--Main Content Area-->
-    <main id="content">
-
-        <!--Q1-->
-        <section id="top-authors" class="top-authors scrollto">
-
-            <div class="row clearfix">
-
-                <div class="col-3">
-                    <div class="section-heading">
-                        <h3>Q1:</h3>
-                        <h2 class="section-title">Top Author</h2>
-                        <p class="section-subtitle">Enter the venue and top number to begin:</p>
-                        <input type="text" id="q1-venue" placeholder="Venue" />
-                        <select type="text" id="q1-top" placeholder="Top"></select>
-                        <button href="#" id="q1-retrieve" class="button right">RETRIEVE</button>
-                    </div>
-
-                </div>
-
-                <div class="col-2-3">
-                    <div id="q1-chart" class="chart"><h2>Ready to crunch!</h2></div>
-                </div>
-
-            </div>
-        </section>
-        <!--End of Q1-->
-
-        <hr />
-
-        <!-- Q2 -->
-        <section id="top-papers" class="top-papers scrollto">
-
-            <div class="row clearfix">
-<div class="col-2-3">
-                    <div id="q2-chart" class="chart"><h2>Shall we?</h2></div>
-                </div>
-                <div class="col-3">
-                    <div class="section-heading">
-                        <h3 class="left">Q2:</h3>
-                        <h2 class="section-title">Top Paper</h2>
-                        <p class="section-subtitle">Enter the venue and top number to begin:</p>
-                        <input type="text" id="q2-venue" placeholder="Venue" />
-                        <select type="text" id="q2-top" placeholder="Top"></select>
-                        <button href="#" id="q2-retrieve" class="button right">RETRIEVE</button>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- End of Q2 -->
-
-        <hr />
-
-
-        <!-- Q3 -->
-        <section id="publications" class="publications scrollto">
-
-            <div class="row clearfix">
-
-                <div class="col-3">
-                    <div class="section-heading">
-                        <h3 class="left">Q3:</h3>
-                        <h2 class="section-title">Publication Trends</h2>
-                        <p class="section-subtitle">Enter the venue to begin:</p>
-                        <input type="text" id="q3-venue" placeholder="Venue" />
-                        <button href="#" id="q3-retrieve" class="button">RETRIEVE</button>
-                    </div>
-
-                </div>
-
-                <div class="col-2-3">
-                    <div id="q3-chart" class="chart"><h2>It's trending!</h2></div>
-                </div>
-
-            </div>
-        </section>
-        <!--End of Q3-->
-
-        <hr />
-
-        <!-- Q4 -->
-        <aside id="citations" class="citations scrollto text-center" data-enllax-ratio=".2">
-
-            <div class="row clearfix">
-
-                <div class="section-heading none">
-                    <h3>Q4</h3>
-                    <h2 class="section-title">Cited Network<p class="section-subtitle">Enter a paper name to begin:</p><input class="long" type="text" id="q4-title" placeholder="Paper title" />
-                        <button href="#" id="q4-retrieve" class="button">RETRIEVE</button>
-                    </h2>
-                </div>
-
-                <div id="q4-chart" class="chart">
-                    <h2>Get connected!</h2>
-                </div>
-            </div>
-
-        </aside>
-        <!--End of Q4-->
-
-        <hr/>
-
-        <!-- Q5 -->
-        <aside id="popular-words" class="popular-words scrollto text-center" data-enllax-ratio=".2">
-
-            <div class="row clearfix">
-
-                <div class="section-heading none">
-                    <h3>Q5</h3>
-                    <h2 class="section-title">Popular Words<p class="section-subtitle">Enter the venue and top word count to begin:</p><input type="text" id="q5-venue" placeholder="Venue" />
-                        <select type="text" id="q5-top" placeholder="Top"></select>
-                        <button href="#" id="q5-retrieve" class="button">RETRIEVE</button>
-                    </h2>
-                </div>
-
-                <div id="q5-chart" class="chart">
-                    <h2>Ready for the hottest buzzwords?</h2>
-                </div>
-                    
-
-            </div>
-
-        </aside>
-        <!--End of Q5-->
-
-      
-
-       <hr/>
-
-    </main>
-    <!--End Main Content Area-->
-
-
-    <!--Footer-->
-    <footer id="landing-footer" class="clearfix">
-        <div class="row clearfix">
-
-            <p id="copyright" class="col-2">Mai Anh Vu & Chua Si Hao</a></p>
-            <!--End of Social Icons in Footer-->
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="status" class="la-ball-triangle-path">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-    </footer>
-    <!--End of Footer-->
+    </div>
+    <!--End of Preloader-->
 
-</div>
+    <div class="page-border" data-wow-duration="0.7s" data-wow-delay="0.2s">
+        <div class="top-border wow fadeInDown animated" style="visibility: visible; animation-name: fadeInDown;"></div>
+        <div class="right-border wow fadeInRight animated" style="visibility: visible; animation-name: fadeInRight;"></div>
+        <div class="bottom-border wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;"></div>
+        <div class="left-border wow fadeInLeft animated" style="visibility: visible; animation-name: fadeInLeft;"></div>
+    </div>
 
-<!-- Include JavaScript resources -->
-<script src="js/jquery.1.8.3.min.js"></script>
-<script src="js/wow.min.js"></script>
-<script src="js/featherlight.min.js"></script>
-<script src="js/featherlight.gallery.min.js"></script>
-<script src="js/jquery.enllax.min.js"></script>
-<script src="js/jquery.scrollUp.min.js"></script>
-<script src="js/jquery.easing.min.js"></script>
-<script src="js/jquery.stickyNavbar.min.js"></script>
-<script src="js/jquery.waypoints.min.js"></script>
-<script src="js/images-loaded.min.js"></script>
-<script src="js/lightbox.min.js"></script>
-<script src="js/site.js"></script>
+    <div id="wrapper">
 
-<script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
-<script src="js/d3.layout.cloud.js"></script>
-<script src="js/graph.js"></script>
-<script src="js/execution.js"></script>
+        <header id="banner" class="scrollto clearfix" data-enllax-ratio=".5">
+            <div id="header" class="nav-collapse">
+                <div class="row clearfix">
+                    <div class="col-1">
+
+                        <div id="logo">
+                            <h1>CS3219</h1>
+                        </div>
+
+                        <!--Main Navigation-->
+                        <nav id="nav-main">
+                            <ul>
+                                <li>
+                                    <a href="#top-authors">Top Authors</a>
+                                </li>
+                                <li>
+                                    <a href="#top-papers">Top Papers</a>
+                                </li>
+                                <li>
+                                    <a href="#publications">Publications</a>
+                                </li>
+                                <li>
+                                    <a href="#citations">Citations</a>
+                                </li>
+                                <li>
+                                    <a href="#popular-words">Popular Words</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!--End of Main Navigation-->
+
+                        <div id="nav-trigger">
+                            <span></span>
+                        </div>
+                        <nav id="nav-mobile"></nav>
+
+                    </div>
+                </div>
+            </div>
+            <!--End of Header-->
+
+            <!--Banner Content-->
+            <div id="banner-content" class="row clearfix">
+
+                <div class="col-38">
+
+                    <div class="section-heading">
+                        <h1>A4 : VISUALIZED</h1>
+                        <h2>Patterns and insights often goes unnoticed in dataset, becomes obvious when visualized.</h2>
+                    </div>
+
+                </div>
+
+            </div>
+            <!--End of Row-->
+        </header>
+
+        <!--Main Content Area-->
+        <main id="content">
+
+            <!--Q1-->
+            <section id="top-authors" class="top-authors scrollto">
+
+                <div class="row clearfix">
+
+                    <div class="col-3">
+                        <div class="section-heading">
+                            <h3>Q1:</h3>
+                            <h2 class="section-title">Top Authors</h2>
+                            <p class="section-subtitle">Enter the venue (optional) and top number to begin:</p>
+                            <input type="text" id="q1-venue" placeholder="Venue" />
+                            <select type="text" id="q1-top" placeholder="Top"></select>
+                            <button href="#" id="q1-retrieve" class="button right">RETRIEVE</button>
+                        </div>
+
+                    </div>
+
+                    <div class="col-2-3">
+                        <div id="q1-chart" class="chart">
+                            <h2>Ready to crunch!</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <!--End of Q1-->
+
+            <hr />
+
+            <!-- Q2 -->
+            <section id="top-papers" class="top-papers scrollto">
+
+                <div class="row clearfix">
+                    <div class="col-2-3">
+                        <div id="q2-chart" class="chart">
+                            <h2>Shall we?</h2>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="section-heading">
+                            <h3 class="left">Q2:</h3>
+                            <h2 class="section-title">Top Papers</h2>
+                            <h3 class="left">in terms of in-citations</h3>
+                            <p class="section-subtitle">Enter the venue (optional) and top number to begin:</p>
+                            <input type="text" id="q2-venue" placeholder="Venue" />
+                            <select type="text" id="q2-top" placeholder="Top"></select>
+                            <button href="#" id="q2-retrieve" class="button right">RETRIEVE</button>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- End of Q2 -->
+
+            <hr />
+
+
+            <!-- Q3 -->
+            <section id="publications" class="publications scrollto">
+
+                <div class="row clearfix">
+
+                    <div class="col-3">
+                        <div class="section-heading">
+                            <h3 class="left">Q3:</h3>
+                            <h2 class="section-title">Publication Trends</h2>
+                            <p class="section-subtitle">Enter the venue (optional):</p>
+                            <input type="text" id="q3-venue" placeholder="Venue" />
+                            <button href="#" id="q3-retrieve" class="button">RETRIEVE</button>
+                        </div>
+
+                    </div>
+
+                    <div class="col-2-3">
+                        <div id="q3-chart" class="chart">
+                            <h2>It's trending!</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <!--End of Q3-->
+
+            <hr />
+
+            <!-- Q4 -->
+            <aside id="citations" class="citations scrollto text-center" data-enllax-ratio=".2">
+
+                <div class="row clearfix">
+
+                    <div class="section-heading none">
+                        <h3>Q4</h3>
+                        <h2 class="section-title">Cited Network
+                            <p class="section-subtitle">Enter a paper name to begin:</p>
+                            <input class="long" type="text" id="q4-title" placeholder="Paper title"/>
+                            <button href="#" id="q4-retrieve" class="button">RETRIEVE</button>
+                        </h2>
+                    </div>
+
+                    <div id="q4-chart" class="chart">
+                        <h2>Get connected!</h2>
+                    </div>
+                </div>
+
+            </aside>
+            <!--End of Q4-->
+
+            <hr/>
+
+            <!-- Q5 -->
+            <aside id="popular-words" class="popular-words scrollto text-center" data-enllax-ratio=".2">
+
+                <div class="row clearfix">
+
+                    <div class="section-heading none">
+                        <h3>Q5</h3>
+                        <h2 class="section-title">Popular Words
+                            <p class="section-subtitle">Enter the venue (optional) and top word count to begin:</p>
+                            <input type="text" id="q5-venue" placeholder="Venue"
+                            />
+                            <select type="text" id="q5-top" placeholder="Top"></select>
+                            <button href="#" id="q5-retrieve" class="button">RETRIEVE</button>
+                        </h2>
+                    </div>
+
+                    <div id="q5-chart" class="chart">
+                        <h2>Ready for the hottest buzzwords?</h2>
+                    </div>
+
+
+                </div>
+
+            </aside>
+            <!--End of Q5-->
+
+
+
+            <hr/>
+
+        </main>
+        <!--End Main Content Area-->
+
+
+        <!--Footer-->
+        <footer id="landing-footer" class="clearfix">
+            <div class="row clearfix">
+
+                <p id="copyright" class="col-2">Mai Anh Vu &amp; Chua Si Hao</a>
+                </p>
+                <!--End of Social Icons in Footer-->
+            </div>
+        </footer>
+        <!--End of Footer-->
+
+    </div>
+
+    <!-- Include JavaScript resources -->
+    <script src="js/jquery.1.8.3.min.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/featherlight.min.js"></script>
+    <script src="js/featherlight.gallery.min.js"></script>
+    <script src="js/jquery.enllax.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/jquery.stickyNavbar.min.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+    <script src="js/images-loaded.min.js"></script>
+    <script src="js/lightbox.min.js"></script>
+    <script src="js/site.js"></script>
+
+    <script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
+    <script src="js/d3.layout.cloud.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/execution.js"></script>
 
 </body>
+
 </html>

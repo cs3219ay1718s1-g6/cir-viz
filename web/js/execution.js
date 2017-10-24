@@ -23,9 +23,9 @@ $(document).ready(function() {
 		var count = $('#q1-top').val();
 
 		//validate before sending
-		if(!venue || count === 'default') { 
+		if (count === 'default') { 
 			//alert("Please ensure that you have indicated venue and count, please try again!");
-			sendError('q1-chart', 'Please ensure that you have indicated venue and count, please try again!');
+			sendError('q1-chart', 'Please ensure that you have indicated a count value, please try again!');
 			return; 
 		}
 
@@ -75,8 +75,8 @@ $(document).ready(function() {
 		var count = $('#q2-top').val();
 
 		//validate before sending
-		if(!venue || count === 'default') { 
-			sendError('q2-chart', 'Please ensure that you have indicated venue and count, please try again!');
+		if(count === 'default') { 
+			sendError('q2-chart', 'Please ensure that you have indicated a count value, please try again!');
 			return; 
 		}
 
@@ -127,12 +127,6 @@ $(document).ready(function() {
 	function retrieveQ3() {
 		
 		var venue = $('#q3-venue').val().trim();
-
-		//validate before sending
-		if(!venue) { 
-			sendError('q3-chart', 'Please ensure that you have indicated venue, please try again!');
-			return; 
-		}
 
 		requestQ3(venue)
 			.then((response)=> { handleQ3(response); })
@@ -212,8 +206,8 @@ $(document).ready(function() {
 		var count = $('#q5-top').val();
 
 		//validate before sending
-		if(!venue || count === 'default') { 
-			sendError('q5-chart', 'Please ensure that you have indicated venue and count, please try again!');
+		if(count === 'default') { 
+			sendError('q5-chart', 'Please ensure that you have indicated a count value, please try again!');
 			return; 
 		}
 
